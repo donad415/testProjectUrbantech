@@ -1,0 +1,10 @@
+UPLOAD_FILE_DIR: 'C:\Users\andre\Documents\testProjectUrbantech\upload_files'
+FILE_EXT: ['.jpeg', '.jpg']
+FONT: 'arial'
+
+DB_MASTER:
+  USER: 'test'
+  PORT: 5435
+  PASS: 'qwerty1234'
+  HOST: 'localhost'
+  DB_NAME: 'testdb'
