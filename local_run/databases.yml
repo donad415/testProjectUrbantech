@@ -4,19 +4,21 @@ services:
   postgres:
     image: postgres:alpine
     environment:
-      POSTGRES_DB: database-name
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: username
+      POSTGRES_DB: testdb
+      POSTGRES_PASSWORD: qwerty1234
+      POSTGRES_USER: test
     ports:
       - 5435:5432
 
   redis:
-    image: redis:latest
-    command: redis-server
-    volumes:
-      - redis:/var/lib/redis
-      - redis-config:/usr/local/etc/redis/redis.conf
-    ports:
-      - 6379:6379
-    networks:
-      - redis-network
+      image: redis:5.0.5
+      container_name: redis
+      restart: unless-stopped
+      hostname: redis
+      network_mode: bridge
+      ports:
+        - 6379:6379/tcp
+      #environment:
+      command: >
+        # Require clients to issue AUTH <PASSWORD> before processing any other commands.
+        --requirepass 112233
