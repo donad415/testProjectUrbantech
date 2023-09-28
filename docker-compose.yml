@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 services:
   postgres:
@@ -18,8 +18,29 @@ services:
       command: >
         --requirepass 112233
         
-  application:
-      container_name: python_app
+  rest_app:
+      container_name: rest_app
       ports:
         - "6969:6969"
-      build: .
+      volumes:
+        - uploads:/uploads
+      build:
+         context: .
+         dockerfile: rest_app/Dockerfile
+
+  image_handler:
+      container_name: image_handler
+      build:
+          context: .
+          dockerfile: image_handler/Dockerfile
+
+  data_saver:
+      container_name: data_saver
+      volumes:
+        - uploads:/uploads
+      build:
+          context: .
+          dockerfile: data_saver/Dockerfile
+
+volumes:
+  uploads:

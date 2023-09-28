@@ -1,10 +1,12 @@
-from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, DateTime
+import os
+
+from sqlalchemy import Column, Integer, String, create_engine, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from utils.yaml_reader import read_yaml
 
-db_config = read_yaml("/app/config.yaml")['DB_MASTER']
+db_config = read_yaml(os.getenv('CONFIG_PATH', '../config.yaml'))['DB_MASTER']
 engine = create_engine(
     'postgresql+psycopg2://{user}:{password}@{host}:{port}/{db_name}'.format(
         user=db_config['USER'],

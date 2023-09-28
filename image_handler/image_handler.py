@@ -14,16 +14,16 @@ def add_rectangle(image, width, height):
     return image
 
 
-def add_text_to_image(image, width, height, config):
+def add_text_to_image(description, image, width, height, config):
     pencil = ImageDraw.Draw(image)
     font = ImageFont.load_default()
     try:
-        font = ImageFont.truetype(config['FONT'], size=20)
+        font = ImageFont.truetype(config['FONT'], size=config['FONT_SIZE'], encoding="utf-8")
     except OSError as e:
         print(e)
     margin = 0
     offset = height
-    for line in textwrap.wrap(task.description, width=width // 7):
+    for line in textwrap.wrap(description, width=width // 7):
         pencil.text(
             (margin, offset),
             line,
@@ -41,7 +41,7 @@ def handle_image(task, config, redis_conn):
     width, height = img.size
 
     img = add_rectangle(img, width, height)
-    img = add_text_to_image(img, width, height, config)
+    img = add_text_to_image(task.description, img, width, height, config)
 
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='PNG')

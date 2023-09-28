@@ -20,7 +20,11 @@ def save_image_to_file(image_bytes, config):
 
     filename = ''.join(random.choice(characters) for _ in range(10)) + f'.{image.format}'
     path_to_file = os.path.join(path_to_dir, filename)
-    image.save(path_to_file)
+    try:
+        image.save(path_to_file)
+        print(path_to_file)
+    except Exception as e:
+        print(e)
     return path_to_file
 
 

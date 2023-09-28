@@ -2,7 +2,7 @@ import datetime
 import os
 
 from flasgger import Swagger
-from flask import Flask, request, abort, send_from_directory
+from flask import Flask, request, abort, send_from_directory, send_file
 from flask_pydantic import validate
 from werkzeug.utils import secure_filename
 
@@ -139,13 +139,11 @@ def download_image(path: int):
     with Session() as session:
         image_data = session.get(ImageEntity, path)
 
-    return send_from_directory(
-        '/', image_data.filepath[1:]
-    )
+    return send_file(image_data.filepath)
 
 
 def run_application():
-    cf = read_yaml("/app/config.yaml")
+    cf = read_yaml(os.getenv('CONFIG_PATH', '../config.yaml'))
     app.config.update(cf)
 
     redis_config = app.config['REDIS']

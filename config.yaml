@@ -1,12 +1,13 @@
-UPLOAD_FILE_DIR: '/home/andrew/Documents/uploads'
+UPLOAD_FILE_DIR: '/uploads'
 FILE_EXT: ['.jpeg', '.jpg']
-FONT: 'arial'
+FONT: '/app/static/fonts/arial.ttf'
+FONT_SIZE: 20
 
 DB_MASTER:
   USER: 'test'
   PORT: 5432
   PASS: 'qwerty1234'
-  HOST: 'localhost'
+  HOST: 'postgres'
   DB_NAME: 'testdb'
 
 REDIS:
