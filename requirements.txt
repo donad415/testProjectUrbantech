@@ -1,0 +1,10 @@
+Flask==2.3.3
+SQLAlchemy==2.0.21
+psycopg2==2.9.7
+PyYAML==6.0.1
+pydantic==2.4.1
+Flask-Pydantic==0.11.0
+Pillow==10.0.1
+flasgger==0.9.7.1
+redis==5.0.1
+Flask-Migrate==4.0.5

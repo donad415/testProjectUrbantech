@@ -8,17 +8,18 @@ services:
       POSTGRES_PASSWORD: qwerty1234
       POSTGRES_USER: test
     ports:
-      - 5435:5432
+      - "5432:5432"
 
   redis:
       image: redis:5.0.5
-      container_name: redis
       restart: unless-stopped
-      hostname: redis
-      network_mode: bridge
       ports:
-        - 6379:6379/tcp
-      #environment:
+        - "6379:6379"
       command: >
-        # Require clients to issue AUTH <PASSWORD> before processing any other commands.
         --requirepass 112233
+        
+  application:
+      container_name: python_app
+      ports:
+        - "6969:6969"
+      build: .

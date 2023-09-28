@@ -1,10 +1,18 @@
-UPLOAD_FILE_DIR: 'C:\Users\andre\Documents\testProjectUrbantech\upload_files'
+UPLOAD_FILE_DIR: '/home/andrew/Documents/uploads'
 FILE_EXT: ['.jpeg', '.jpg']
 FONT: 'arial'
 
 DB_MASTER:
   USER: 'test'
-  PORT: 5435
+  PORT: 5432
   PASS: 'qwerty1234'
   HOST: 'localhost'
   DB_NAME: 'testdb'
+
+REDIS:
+  HOST: 'redis'
+  PORT: 6379
+  PASS: 112233
+  DB_NUM: 0
+
+PORT: 6969
