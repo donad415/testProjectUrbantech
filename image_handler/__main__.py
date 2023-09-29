@@ -17,10 +17,17 @@ if __name__ == '__main__':
     cf = read_yaml(os.getenv('CONFIG_PATH', '../config.yaml'))
     redis_conn = init_redis(cf['REDIS'])
 
-    logging.info("image_handler was successfully started")
+    logging.info('image_handler was successfully started')
 
     while True:
-        task = get_handle_image_task(redis_conn)
+        task = None
+        try:
+            task = get_handle_image_task(redis_conn)
+        except Exception as e:
+            logging.error(f'Cannot parse task from queue. Exception: {e}')
         if task:
-            handle_image(task, cf, redis_conn)
+            try:
+                handle_image(task, cf, redis_conn)
+            except Exception as e:
+                logging.error(f'Cannot handle image. Filetime:{task.time} Exception: {e}')
         time.sleep(1)

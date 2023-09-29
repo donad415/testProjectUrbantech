@@ -24,12 +24,19 @@ services:
         - "6969:6969"
       volumes:
         - uploads:/uploads
+      depends_on:
+        - postgres
+        - redis
+      command: bash -c "alembic upgrade head && python3 -u rest_app"
       build:
          context: .
          dockerfile: rest_app/Dockerfile
 
   image_handler:
       container_name: image_handler
+      depends_on:
+        - postgres
+        - redis
       build:
           context: .
           dockerfile: image_handler/Dockerfile
@@ -38,6 +45,9 @@ services:
       container_name: data_saver
       volumes:
         - uploads:/uploads
+      depends_on:
+        - postgres
+        - redis
       build:
           context: .
           dockerfile: data_saver/Dockerfile

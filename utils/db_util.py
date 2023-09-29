@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from utils.yaml_reader import read_yaml
 
-db_config = read_yaml(os.getenv('CONFIG_PATH', '../config.yaml'))['DB_MASTER']
+db_config = read_yaml(os.getenv('CONFIG_PATH', './config.yaml'))['DB_MASTER']
 engine = create_engine(
     'postgresql+psycopg2://{user}:{password}@{host}:{port}/{db_name}'.format(
         user=db_config['USER'],

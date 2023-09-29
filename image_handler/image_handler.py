@@ -1,4 +1,5 @@
 import io
+import logging
 import textwrap
 
 from PIL import Image, ImageDraw, ImageFont
@@ -19,11 +20,11 @@ def add_text_to_image(description, image, width, height, config):
     font = ImageFont.load_default()
     try:
         font = ImageFont.truetype(config['FONT'], size=config['FONT_SIZE'], encoding="utf-8")
-    except OSError as e:
-        print(e)
+    except OSError:
+        logging.warning('Cannot load configured font, used default')
     margin = 0
     offset = height
-    for line in textwrap.wrap(description, width=width // 7):
+    for line in textwrap.wrap(description, width=width // 10):
         pencil.text(
             (margin, offset),
             line,
@@ -40,8 +41,16 @@ def handle_image(task, config, redis_conn):
 
     width, height = img.size
 
-    img = add_rectangle(img, width, height)
-    img = add_text_to_image(task.description, img, width, height, config)
+    try:
+        img = add_rectangle(img, width, height)
+    except Exception:
+        logging.error(f'Cannot paint rectangle. Filetime = {task.time}')
+        return
+    try:
+        img = add_text_to_image(task.description, img, width, height, config)
+    except Exception:
+        logging.error(f'Cannot print text. Filetime = {task.time}')
+        return
 
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='PNG')

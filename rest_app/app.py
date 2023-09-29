@@ -1,13 +1,16 @@
 import datetime
+import logging
 import os
+import sys
 
 from flasgger import Swagger
-from flask import Flask, request, abort, send_from_directory, send_file
+from flask import Flask, request, send_file
 from flask_pydantic import validate
 from werkzeug.utils import secure_filename
 
 from models.image_task import HandleImageTask
 from rest_app.dto.api_request.image import UploadImageRequest, GetImagesRequest
+from rest_app.dto.api_response.base.base import BaseResponse
 from rest_app.dto.api_response.image import ImageInfo, GetImagesResponse
 from utils.db_util import Session, ImageEntity
 from utils.redis_util import init_redis, create_handle_image_task
@@ -33,12 +36,28 @@ def upload_image(form: UploadImageRequest):
         type: file
         required: true
         description: Файл изображения
+    definitions:
+      BaseResponse:
+        type: object
+        properties:
+          success:
+            type: bool
+            required: true
+            description: Успешно ли прошёл запрос
+          error:
+            type: string
+            required: false
+            description: Описание ошибки
     responses:
       200:
         description: Изображение успешно загружено
+        schema:
+            $ref: '#/definitions/BaseResponse'
+      400:
+        description: Ошибка валидации
     """
     if not (file := request.files.get('file')):
-        abort(400)
+        return 'Validation failed. Request must contain file.', 400
     filename = secure_filename(file.filename)
     if filename != '':
         # Проверка соответствия расширения
@@ -52,9 +71,12 @@ def upload_image(form: UploadImageRequest):
             time=datetime.datetime.now().timestamp()
         )
         create_handle_image_task(app.config['REDIS_CONN'], task)
-        return f"Hello {form.description}!!"
+        return BaseResponse(success=True)
 
-    return 201
+    return BaseResponse(
+        success=False,
+        error='Incorrect filename'
+    )
 
 
 @app.route('/api/images', methods=["GET"])
@@ -99,6 +121,8 @@ def get_images_info(query: GetImagesRequest):
             description: Получаем список
             schema:
                 $ref: '#/definitions/GetImagesResponse'
+          400:
+            description: Ошибка валидации
         """
     with Session() as session:
         images_count = session.query(ImageEntity).count()
@@ -135,6 +159,8 @@ def download_image(path: int):
             responses:
               200:
                 description: Файл изображения
+              400:
+                description: Ошибка валидации
             """
     with Session() as session:
         image_data = session.get(ImageEntity, path)
@@ -143,6 +169,12 @@ def download_image(path: int):
 
 
 def run_application():
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=logging.INFO,
+        format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    )
+
     cf = read_yaml(os.getenv('CONFIG_PATH', '../config.yaml'))
     app.config.update(cf)
 

@@ -25,6 +25,8 @@ COPY --chown=test:test utils /app/utils
 COPY --chown=test:test models /app/models
 COPY --chown=test:test rest_app /app/rest_app
 COPY --chown=test:test config.yaml /app/config.yaml
+COPY --chown=test:test alembic /app/alembic
+COPY --chown=test:test alembic.ini /app/alembic.ini
 EXPOSE 6969
 WORKDIR /app
 USER test
