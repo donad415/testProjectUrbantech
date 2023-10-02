@@ -22,7 +22,9 @@ def create_handle_image_task(conn, task: HandleImageTask):
 
 
 def get_handle_image_task(conn) -> HandleImageTask:
-    return HandleImageTask.from_json(conn.lpop(HANDLE_IMAGE_QUEUE))
+    if data_from_queue := conn.blpop(HANDLE_IMAGE_QUEUE, 60):
+        return HandleImageTask.from_json(data_from_queue[1])
+    return None
 
 
 def create_save_image_task(conn, task: SaveImageTask):
@@ -30,4 +32,6 @@ def create_save_image_task(conn, task: SaveImageTask):
 
 
 def get_save_image_task(conn) -> SaveImageTask:
-    return SaveImageTask.from_json(conn.lpop(SAVE_IMAGE_QUEUE))
+    if data_from_queue := conn.blpop(SAVE_IMAGE_QUEUE, 60):
+        return SaveImageTask.from_json(data_from_queue[1])
+    return None

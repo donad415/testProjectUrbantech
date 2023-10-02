@@ -15,6 +15,15 @@ def add_rectangle(image, width, height):
     return image
 
 
+def draw_line(pencil, offset, line, font, margin=2):
+    pencil.text(
+        (margin, offset),
+        line,
+        font=font,
+        fill='white'
+    )
+
+
 def add_text_to_image(description, image, width, height, config):
     pencil = ImageDraw.Draw(image)
     font = ImageFont.load_default()
@@ -22,16 +31,27 @@ def add_text_to_image(description, image, width, height, config):
         font = ImageFont.truetype(config['FONT'], size=config['FONT_SIZE'], encoding="utf-8")
     except OSError:
         logging.warning('Cannot load configured font, used default')
-    margin = 0
     offset = height
-    for line in textwrap.wrap(description, width=width // 10):
-        pencil.text(
-            (margin, offset),
-            line,
-            font=font,
-            fill='white'
-        )
-        offset += 25
+    line = ''
+    words = description.split()
+    for index, word in enumerate(description.split()):
+        new_str = line
+        if index != 0:
+            new_str += ' '
+        new_str += word
+
+        (w_str, h_str), (_, _) = font.font.getsize(new_str)
+
+        if w_str < width:
+            line = new_str
+        else:
+            draw_line(pencil, offset, line, font)
+            line = word
+            offset += h_str + 5
+
+        if index == len(words) - 1:
+            draw_line(pencil, offset, line, font)
+
     return image
 
 

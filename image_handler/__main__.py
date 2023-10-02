@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-import time
 
 from image_handler import handle_image
 from utils.redis_util import init_redis, get_handle_image_task
@@ -30,4 +29,3 @@ if __name__ == '__main__':
                 handle_image(task, cf, redis_conn)
             except Exception as e:
                 logging.error(f'Cannot handle image. Filetime:{task.time} Exception: {e}')
-        time.sleep(1)

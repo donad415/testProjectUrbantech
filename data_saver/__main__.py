@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-import time
 
 from data_saver import save_image
 from utils.redis_util import init_redis, get_save_image_task
@@ -30,4 +29,3 @@ if __name__ == '__main__':
                 save_image(task, cf)
             except Exception as e:
                 logging.error(f'Cannot save image. Filetime: {task.time} Exception: {e}')
-        time.sleep(1)
